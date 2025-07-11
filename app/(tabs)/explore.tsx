@@ -1,110 +1,211 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { Dimensions, FlatList, Image, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
 
-import { Collapsible } from '@/components/Collapsible';
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import Animated, { FadeInDown } from 'react-native-reanimated';
+
 import { ExternalLink } from '@/components/ExternalLink';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+import { useState } from 'react';
 
-export default function TabTwoScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Explore</ThemedText>
-      </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
+const { width } = Dimensions.get('window');
+
+const sections = [
+  {
+    id: '1',
+    title: 'File-based Routing',
+    content: 'This app uses file-based routing with two main screens: app/(tabs)/index.tsx and app/(tabs)/explore.tsx. The layout file in app/(tabs)/_layout.tsx sets up the tab navigator.',
+    link: 'https://docs.expo.dev/router/introduction',
+    linkText: 'Learn more about routing',
+  },
+  {
+    id: '2',
+    title: 'Cross-Platform Support',
+    content: 'This project runs on Android, iOS, and web. Press "w" in the terminal to open the web version.',
+    link: null,
+    linkText: null,
+  },
+  {
+    id: '3',
+    title: 'Dynamic Images',
+    content: 'Use @2x and @3x suffixes for images to support different screen densities.',
+    link: 'https://reactnative.dev/docs/images',
+    linkText: 'Learn more about images',
+    image: require('@/assets/images/react-logo.png'),
+  },
+  {
+    id: '4',
+    title: 'Custom Fonts',
+    content: 'Load custom fonts like SpaceMono in app/_layout.tsx for a unique typography experience.',
+    link: 'https://docs.expo.dev/versions/latest/sdk/font',
+    linkText: 'Learn more about fonts',
+  },
+  {
+    id: '5',
+    title: 'Light & Dark Mode',
+    content: 'This template supports light and dark modes using the useColorScheme() hook to adapt UI colors.',
+    link: 'https://docs.expo.dev/develop/user-interface/color-themes/',
+    linkText: 'Learn more about themes',
+  },
+  {
+    id: '6',
+    title: 'Animations',
+    content: 'Explore animated components like HelloWave.tsx using react-native-reanimated for smooth effects.',
+    link: null,
+    linkText: null,
+  },
+];
+
+export default function ExploreScreen() {
+  const colorScheme = useColorScheme();
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const renderSection = ({ item, index }) => (
+    <Animated.View entering={FadeInDown.delay(index * 100)} style={styles.card}>
+      <LinearGradient
+        colors={colorScheme === 'dark' ? ['#1E3A8A', '#3B82F6'] : ['#60A5FA', '#BFDBFE']}
+        style={styles.cardGradient}
+      >
+        <ThemedText type="subtitle" style={styles.cardTitle}>
+          {item.title}
         </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image source={require('@/assets/images/react-logo.png')} style={{ alignSelf: 'center' }} />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Custom fonts">
-        <ThemedText>
-          Open <ThemedText type="defaultSemiBold">app/_layout.tsx</ThemedText> to see how to load{' '}
-          <ThemedText style={{ fontFamily: 'SpaceMono' }}>
-            custom fonts such as this one.
-          </ThemedText>
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/versions/latest/sdk/font">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful <ThemedText type="defaultSemiBold">react-native-reanimated</ThemedText>{' '}
-          library to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
+        <ThemedText style={styles.cardContent}>{item.content}</ThemedText>
+        {item.image && (
+          <Image source={item.image} style={styles.cardImage} resizeMode="contain" />
+        )}
+        {item.link && (
+          <ExternalLink href={item.link}>
+            <ThemedText type="link" style={styles.cardLink}>
+              {item.linkText}
             </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
+          </ExternalLink>
+        )}
+      </LinearGradient>
+    </Animated.View>
+  );
+
+  return (
+    <ThemedView style={styles.container}>
+      <LinearGradient
+        colors={colorScheme === 'dark' ? ['#111827', '#1F2937'] : ['#EFF6FF', '#DBEAFE']}
+        style={styles.header}
+      >
+        <ThemedText type="title" style={styles.headerTitle}>
+          Discover
+        </ThemedText>
+        <Ionicons
+          name="rocket-outline"
+          size={40}
+          color={colorScheme === 'dark' ? '#60A5FA' : '#1E3A8A'}
+          style={styles.headerIcon}
+        />
+      </LinearGradient>
+
+      <FlatList
+        data={sections}
+        renderItem={renderSection}
+        keyExtractor={(item) => item.id}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onScroll={(event) => {
+          const index = Math.round(event.nativeEvent.contentOffset.x / width);
+          setActiveIndex(index);
+        }}
+        style={styles.carousel}
+      />
+
+      <ThemedView style={styles.dotsContainer}>
+        {sections.map((_, index) => (
+          <TouchableOpacity
+            key={index}
+            style={[styles.dot, activeIndex === index && styles.activeDot]}
+            onPress={() => setActiveIndex(index)}
+          />
+        ))}
+      </ThemedView>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
+  container: {
+    flex: 1,
   },
-  titleContainer: {
+  header: {
+    padding: 20,
+    paddingTop: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
+  },
+  headerTitle: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  headerIcon: {
+    marginTop: 10,
+  },
+  carousel: {
+    flex: 1,
+    marginTop: 20,
+  },
+  card: {
+    width: width - 40,
+    marginHorizontal: 20,
+    borderRadius: 20,
+    overflow: 'hidden',
+    marginBottom: 20,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  },
+  cardGradient: {
+    padding: 20,
+  },
+  cardTitle: {
+    fontSize: 24,
+    fontWeight: '600',
+    marginBottom: 10,
+    color: '#fff',
+  },
+  cardContent: {
+    fontSize: 16,
+    lineHeight: 24,
+    color: '#E5E7EB',
+  },
+  cardImage: {
+    width: 100,
+    height: 100,
+    marginVertical: 10,
+    alignSelf: 'center',
+  },
+  cardLink: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#BFDBFE',
+  },
+  dotsContainer: {
     flexDirection: 'row',
-    gap: 8,
+    justifyContent: 'center',
+    padding: 10,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#D1D5DB',
+    marginHorizontal: 5,
+  },
+  activeDot: {
+    backgroundColor: '#3B82F6',
+    width: 12,
+    height: 12,
+    borderRadius: 6,
   },
 });
