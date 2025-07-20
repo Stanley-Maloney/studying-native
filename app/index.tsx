@@ -1,8 +1,13 @@
-import { useEffect, useState } from "react";
-import { Image, Pressable, StyleSheet } from "react-native";
-import { HelloWave } from "@/components/HelloWave";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
+import { useEffect, useState } from 'react';
+import { SafeAreaView, StyleSheet } from 'react-native';
+import { useFonts, Poppins_700Bold, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
+import { Inter_400Regular } from '@expo-google-fonts/inter';
+
+import CharacterImage from '@/components/CharacterImage';
+import TimerBox from '@/components/TimerBox';
+import TimerControls from '@/components/TimerControls';
+import { ThemedView } from '@/components/ThemedView';
+import { HelloWave } from '@/components/HelloWave';
 
 const DURATIONS = {
   work: 25 * 60,
@@ -11,9 +16,15 @@ const DURATIONS = {
 } as const;
 
 export default function Index() {
-  const [session, setSession] = useState<keyof typeof DURATIONS>("work");
+  const [session, setSession] = useState<keyof typeof DURATIONS>('work');
   const [timeLeft, setTimeLeft] = useState(DURATIONS.work);
   const [isRunning, setIsRunning] = useState(false);
+
+  const [fontsLoaded] = useFonts({
+    Poppins_700Bold,
+    Poppins_600SemiBold,
+    Inter_400Regular,
+  });
 
   useEffect(() => {
     if (!isRunning) return;
@@ -30,8 +41,13 @@ export default function Index() {
     return () => clearInterval(id);
   }, [isRunning]);
 
-  const minutes = String(Math.floor(timeLeft / 60)).padStart(2, "0");
-  const seconds = String(timeLeft % 60).padStart(2, "0");
+  if (!fontsLoaded) {
+    return null;
+  }
+
+  const minutes = String(Math.floor(timeLeft / 60)).padStart(2, '0');
+  const seconds = String(timeLeft % 60).padStart(2, '0');
+  const total = DURATIONS[session];
 
   const handleStartPause = () => {
     if (timeLeft === 0) {
@@ -47,80 +63,48 @@ export default function Index() {
   };
 
   const cycleSession = () => {
-    if (session === "work") {
-      resetTimer("short");
-    } else if (session === "short") {
-      resetTimer("long");
+    if (session === 'work') {
+      resetTimer('short');
+    } else if (session === 'short') {
+      resetTimer('long');
     } else {
-      resetTimer("work");
+      resetTimer('work');
     }
   };
 
   const getImage = () => {
-    if (session === "work") return require("./pomodor.png");
-    if (session === "short") return require("./short.png");
-    return require("./long.png");
+    if (session === 'work') return require('./pomodor.png');
+    if (session === 'short') return require('./short.png');
+    return require('./long.png');
   };
 
   return (
     <ThemedView style={styles.container}>
-      <HelloWave />
-      <Image source={getImage()} />
-      <ThemedView style={styles.actions}>
-        <ThemedText style={styles.timer}>
-          {minutes}:{seconds}
-        </ThemedText>
-        <Pressable style={styles.button} onPress={handleStartPause}>
-          <ThemedText>{isRunning ? "Pausar" : "Começar"}</ThemedText>
-        </Pressable>
-        <Pressable
-          style={[styles.button, styles.secondary]}
-          onPress={() => resetTimer(session)}
-        >
-          <ThemedText>Resetar</ThemedText>
-        </Pressable>
-        <Pressable
-          style={[styles.button, styles.secondary]}
-          onPress={cycleSession}
-        >
-          <ThemedText>Trocar</ThemedText>
-        </Pressable>
-      </ThemedView>
+      <SafeAreaView style={styles.safe}> 
+        <HelloWave />
+        <CharacterImage source={getImage()} />
+        <TimerBox time={`${minutes}:${seconds}`} progress={timeLeft / total} isRunning={isRunning} />
+        <TimerControls
+          isRunning={isRunning}
+          onStartPause={handleStartPause}
+          onReset={() => resetTimer(session)}
+          onCycle={cycleSession}
+        />
+      </SafeAreaView>
     </ThemedView>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 40,
-  },
-  actions: {
-    paddingVertical: 24,
-    paddingHorizontal: 24,
-    backgroundColor: '#14448080',
-    width: "80%",
-    borderRadius: 32,
-    borderWidth: 2,
-    borderColor: '#144480',
-  },
-  timer: {
-    fontSize: 54,
-    color: '#FFF',
-    fontWeight: 'bold',
-    textAlign: 'center'
-  },
-  button: {
-    backgroundColor: '#B872FF',
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 24,
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  secondary: {
-    backgroundColor: '#6D28D9',
-    marginTop: 12,
+  safe: {
+    alignItems: 'center',
+    gap: 32,
+    width: '100%',
+    paddingHorizontal: 20,
   },
 });
-
