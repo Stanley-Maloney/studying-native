@@ -1,17 +1,19 @@
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet } from "react-native";
+import { HelloWave } from "@/components/HelloWave";
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
 export default function Index() {
   return (
-    <View
-      style={styles.container}
-    >
+    <ThemedView style={styles.container}>
+      <HelloWave />
       <Image source={require('./pomodor.png')} />
-      <View style={styles.actions}>
-        <Text style={styles.timer}>25:00</Text>
-        <Pressable>
-          <Text>Começar</Text>
+      <ThemedView style={styles.actions}>
+        <ThemedText style={styles.timer}>25:00</ThemedText>
+        <Pressable style={styles.button}>
+          <ThemedText>Começar</ThemedText>
         </Pressable>
-      </View>
-    </View>
+      </ThemedView>
+    </ThemedView>
   );
 }
 const styles = StyleSheet.create({
@@ -19,7 +21,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: '#021123',
     gap: 40,
   },
   actions: {
@@ -39,6 +40,10 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: '#B872FF',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 24,
+    alignItems: 'center',
   }
 });
 
