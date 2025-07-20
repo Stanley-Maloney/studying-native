@@ -24,10 +24,10 @@ function showToast(message: string) {
   }
 }
 
-const GradientButton = ({ label, onPress, colors }: { label: string; onPress: () => void; colors: string[] }) => (
+const GradientButton = ({ label, message, onPress, colors }: { label: string; message: string; onPress: () => void; colors: string[] }) => (
   <Pressable
     onPress={() => {
-      showToast(label === 'Começar' || label === 'Pausar' ? `Timer ${label.toLowerCase()}` : label);
+      showToast(message);
       onPress();
     }}
     style={{ width: '100%' }}
@@ -43,11 +43,22 @@ export default function TimerControls({ isRunning, onStartPause, onReset, onCycl
     <>
       <GradientButton
         label={isRunning ? 'Pausar' : 'Começar'}
+        message={isRunning ? 'Timer pausado' : 'Timer iniciado'}
         onPress={onStartPause}
         colors={['#B872FF', '#6D28D9']}
       />
-      <GradientButton label="Resetar" onPress={onReset} colors={['#6D28D9', '#4B0082']} />
-      <GradientButton label="Trocar" onPress={onCycle} colors={['#6D28D9', '#4B0082']} />
+      <GradientButton
+        label="Resetar"
+        message="Timer resetado"
+        onPress={onReset}
+        colors={['#6D28D9', '#4B0082']}
+      />
+      <GradientButton
+        label="Trocar"
+        message="Sessão trocada"
+        onPress={onCycle}
+        colors={['#6D28D9', '#4B0082']}
+      />
     </>
   );
 }
